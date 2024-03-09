@@ -1,0 +1,75 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  previewFeatures = ["relationJoins"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("POSTGRES_URL")
+}
+
+model Jugador {
+  id               Int                  @id @default(autoincrement())
+  nombres          String               @db.VarChar
+  apellidos        String               @db.VarChar
+  nombre_corto     String               @db.VarChar
+  cedula           String               @unique @db.VarChar
+  RH               String               @db.VarChar
+  telefono         String               @db.VarChar
+  email            String               @db.VarChar
+  talla_camiseta   String
+  fecha_nacimiento String
+  estado           Boolean
+  tipo             String
+  edad             Int?
+  posiciones       Jugador_Posiciones[] // Campo de relación inversa
+  partidos         Partido_Jugadores[]
+}
+
+model Jugador_Posiciones {
+  id          Int      @id @default(autoincrement())
+  id_jugador  Int
+  id_posicion Int
+  tipo        String
+  posicion    Posicion @relation(fields: [id_posicion], references: [id])
+  jugador     Jugador  @relation(fields: [id_jugador], references: [id])
+}
+
+model Posicion {
+  id         Int                  @id @default(autoincrement())
+  posicion   String
+  sigla      String
+  posiciones Jugador_Posiciones[]
+}
+
+model Partido {
+  id        Int                 @id @default(autoincrement())
+  fecha     String
+  lugar     String
+  hora      String
+  jugadores Partido_Jugadores[]
+}
+
+model Partido_Jugadores {
+  id              Int     @id @default(autoincrement())
+  id_jugador      Int
+  id_partido      Int
+  equipo          String
+  tarjeta_amarilla Int? @default(0)
+  tarjeta_roja    Int? @default(0)
+  goles           Int? @default(0)
+  autogoles       Int? @default(0)
+  comentarios     String?
+  calificacion    Float? @default(0)
+  goles_arquero   Int? 
+  dt_ganador      Int?
+  jugador         Jugador @relation(fields: [id_jugador], references: [id])
+  partido         Partido @relation(fields: [id_partido], references: [id])
+}
+
