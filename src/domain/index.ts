@@ -23,6 +23,8 @@ export * from './uses-cases/jugadores/delete-jugador';
 export * from './uses-cases/jugadores/get-jugador';
 export * from './uses-cases/jugadores/get-jugadores';
 export * from './uses-cases/jugadores/get-jugador-id';
+export * from './uses-cases/jugadores/get-jugador-id-telegram';
+export * from './uses-cases/jugadores/get-jugador-cedula';
 export * from './uses-cases/jugadores/update-jugador';
 
 export * from './uses-cases/posiciones/create-posicion';
@@ -38,7 +40,10 @@ export * from './uses-cases/partidos/get-partidos';
 export * from './uses-cases/partidos/update-partidos';
 
 export * from './uses-cases/partidosjugadores/create-partidojugadores';
+export * from './uses-cases/partidosjugadores/create-partidojugadores-c';
+export * from './uses-cases/partidosjugadores/get-partidojugadores-idpartido';
 export * from './uses-cases/partidosjugadores/delete-partidojugadores';
+export * from './uses-cases/partidosjugadores/delete-partidojugadores-idjugado-idpartido';
 export * from './uses-cases/partidosjugadores/get-partidojugador';
 export * from './uses-cases/partidosjugadores/get-partidojugadores';
 export * from './uses-cases/partidosjugadores/update-partidojugadores';

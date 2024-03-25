@@ -17,6 +17,7 @@ export class JugadorEntity {
       public fecha_nacimiento:  Date,
       public estado:            Boolean,
       public tipo:              string,
+      public id_telegram?:      string,
       public edad?:             number,
     ) {}
     
@@ -24,7 +25,7 @@ export class JugadorEntity {
       
       
       const {   id, nombres, apellidos, nombre_corto, cedula, RH, telefono,
-        correo, talla_camiseta,fecha_nacimiento, estado,tipo,edad,
+        correo, talla_camiseta,fecha_nacimiento, estado,tipo,id_telegram,edad,
       } = object;
 
 
@@ -32,7 +33,7 @@ export class JugadorEntity {
         
       return new JugadorEntity(
         id, nombres, apellidos, nombre_corto, cedula, RH, telefono,
-        correo, talla_camiseta,fecha_nacimiento, estado,tipo,edad, 
+        correo, talla_camiseta,fecha_nacimiento, estado,tipo,id_telegram,edad, 
       );
     }
   

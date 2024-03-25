@@ -27,6 +27,7 @@ model Jugador {
   fecha_nacimiento String
   estado           Boolean
   tipo             String
+  id_telegram      String?
   edad             Int?
   posiciones       Jugador_Posiciones[] // Campo de relación inversa
   partidos         Partido_Jugadores[]

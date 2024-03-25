@@ -3,11 +3,24 @@ import { CreatePartidoJugadoresDto, UpdatePartidoJugadoresDto } from '../../doma
 import { PartidoJugadoresEntity } from '../../domain/entities/partidojugadores.entity';
 import { PartidoJugadoresRepository } from '../../domain/repositories/partidojugadores.repository';
 
-export class PartidoJugadoresRepositoryImp implements PartidoJugadoresRepository{
+export class PartidoJugadoresRepositoryImp implements PartidoJugadoresRepository {
 
     constructor(
         private readonly datasource: PartidoJugadoresDatasource,
-    ){}
+    ) { }
+    findByIdPartido(id_partido: number): Promise<PartidoJugadoresEntity[]> {
+        return this.datasource.findByIdPartido(id_partido);
+    }
+    findByIdJugadorIdPartido(id_jugador: number, id_partido: number): Promise<PartidoJugadoresEntity> {
+        return this.datasource.findByIdJugadorIdPartido(id_jugador, id_partido);
+    }
+
+    deleteByIdJugadorIdPartido(id_jugador: number, id_partido: number): Promise<{ numero_registros: number }> {
+        return this.datasource.deleteByIdJugadorIdPartido(id_jugador, id_partido);
+    }
+    createIdjugadorIdpartido(createPartidoJugadoresDto: CreatePartidoJugadoresDto): Promise<PartidoJugadoresEntity> {
+        return this.datasource.createIdjugadorIdpartido(createPartidoJugadoresDto);
+    }
     goleadorPorPartido(fecha: string): Promise<{ nombre_corto: string; goles: number; }[]> {
         return this.datasource.goleadorPorPartido(fecha);
     }
@@ -38,7 +51,7 @@ export class PartidoJugadoresRepositoryImp implements PartidoJugadoresRepository
     updateAllJugadoresPartido(partidoJugadores: [{ [key: string]: any; }]): Promise<PartidoJugadoresEntity[]> {
         return this.datasource.updateAllJugadoresPartido(partidoJugadores);
     }
-    createAll(partidoJugadores: [{ [key: string]: any; }]): Promise<{mesage:string}> {
+    createAll(partidoJugadores: [{ [key: string]: any; }]): Promise<{ mesage: string }> {
         return this.datasource.createAll(partidoJugadores);
     }
     getAll(): Promise<PartidoJugadoresEntity[]> {
@@ -47,8 +60,8 @@ export class PartidoJugadoresRepositoryImp implements PartidoJugadoresRepository
     findById(id: number): Promise<PartidoJugadoresEntity> {
         return this.datasource.deleteById(id);
     }
-    create(createPartidoJugadoresDto: CreatePartidoJugadoresDto,nombre_corto: string,fecha: string): Promise<PartidoJugadoresEntity> {
-        return this.datasource.create(createPartidoJugadoresDto,nombre_corto,fecha);
+    create(createPartidoJugadoresDto: CreatePartidoJugadoresDto, nombre_corto: string, fecha: string): Promise<PartidoJugadoresEntity> {
+        return this.datasource.create(createPartidoJugadoresDto, nombre_corto, fecha);
     }
     updateById(updatePartidoJugadoresDto: UpdatePartidoJugadoresDto): Promise<PartidoJugadoresEntity> {
         return this.datasource.updateById(updatePartidoJugadoresDto);

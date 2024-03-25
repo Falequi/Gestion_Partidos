@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { CreateJugador, DeleteJugador, GetJugador, GetJugadorId, GetJugadores, JugadorRepository, UpdateJugador } from '../../domain';
+import { CreateJugador, DeleteJugador, GetJugador, GetJugadorCedula, GetJugadorId, GetJugadorIdTelegram, GetJugadores, JugadorRepository, UpdateJugador } from '../../domain';
 import { CreateJugadorDto, UpdateJugadorDto } from '../../domain/dto';
 
 
@@ -10,6 +10,24 @@ export class JugadoresController {
   constructor(
     private readonly jugadorRepository: JugadorRepository,
   ) { }
+
+  public getJugadorIdTelegram = (req: Request, res: Response) => {
+    const id_telegram = req.params.id_telegram;
+    
+    new GetJugadorIdTelegram(this.jugadorRepository)
+      .execute(id_telegram)
+      .then(jugador => res.json(jugador))
+      .catch(error => res.status(400).json({ error }));
+  }
+
+  public getJugadorCedula = (req: Request, res: Response) => {
+    const cedula = req.params.cedula;
+    new GetJugadorCedula(this.jugadorRepository)
+      .execute(cedula)
+      .then(jugador => res.json(jugador))
+      .catch(error => res.status(400).json({ error }));
+
+  }
 
 
   public getJugadores = (req: Request, res: Response) => {
@@ -76,7 +94,5 @@ export class JugadoresController {
       .catch(error => res.status(400).json({ error }));
 
   };
-
-
 
 } 

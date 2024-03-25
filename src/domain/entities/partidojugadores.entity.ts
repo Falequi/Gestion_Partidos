@@ -25,7 +25,7 @@ export class PartidoJugadoresEntity {
             goles_arquero, dt_ganador
         } = object;
 
-        if ( !id ) throw 'Id is required';
+        //if ( !id ) throw 'Id is required';
 
         return new PartidoJugadoresEntity(
             id, id_jugador, id_partido, equipo,

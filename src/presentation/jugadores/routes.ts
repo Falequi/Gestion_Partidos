@@ -17,7 +17,9 @@ export class JugadoresRoutes{
     
         router.get('/', jugadoresController.getJugadores );
         router.get('/:id', jugadoresController.getJugadorById );
-        router.get('/id_jugador/:nombre_corto', jugadoresController.getJugadorId );
+        router.get('/id_jugador/pornombrecorto/:nombre_corto', jugadoresController.getJugadorId );
+        router.get('/jugadorporcedula/:cedula', jugadoresController.getJugadorCedula );
+        router.get('/jugadoridteletram/:id_telegram', jugadoresController.getJugadorIdTelegram );
         
         router.post('/', jugadoresController.createJugador );
         router.put('/:id', jugadoresController.updateJugador );

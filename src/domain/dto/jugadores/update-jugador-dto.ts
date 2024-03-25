@@ -16,6 +16,7 @@ export class UpdateJugadorDto {
         public readonly fecha_nacimiento: string,
         public readonly estado: boolean,
         public readonly tipo: string,
+        public id_telegram?: string,
         public readonly edad?: number,
     ) { }
 
@@ -32,8 +33,9 @@ export class UpdateJugadorDto {
         if (this.email) returnObj.email = this.email;
         if (this.talla_camiseta) returnObj.talla_camiseta = this.talla_camiseta;
         if (this.fecha_nacimiento) returnObj.fecha_nacimiento = this.fecha_nacimiento;
-        if (this.fecha_nacimiento) returnObj.estado = this.estado;
-        if (this.fecha_nacimiento) returnObj.tipo = this.tipo;
+        if (this.estado) returnObj.estado = this.estado;
+        if (this.tipo) returnObj.tipo = this.tipo;
+        if (this.id_telegram) returnObj.id_telegram = this.id_telegram;
 
         return returnObj;
     }
@@ -41,7 +43,7 @@ export class UpdateJugadorDto {
     static create(props: { [key: string]: any }): [string?, UpdateJugadorDto?] {
 
         const { id,nombres, apellidos, nombre_corto, cedula,
-            RH, telefono, email, talla_camiseta, fecha_nacimiento,estado,tipo } = props;
+            RH, telefono, email, talla_camiseta, fecha_nacimiento,estado,tipo,id_telegram } = props;
         
             let newfechanacimiento = new Date();
 
@@ -60,7 +62,7 @@ export class UpdateJugadorDto {
 
         return [undefined,
             new UpdateJugadorDto(id,nombres, apellidos, nombre_corto, cedula, RH,
-                telefono, email, talla_camiseta, fecha_nacimiento,estado,tipo,
+                telefono, email, talla_camiseta, fecha_nacimiento,estado,tipo,id_telegram,
                 edad)];
     }
 

@@ -5,6 +5,46 @@ import { PartidoJugadoresEntity } from '../../domain/entities/partidojugadores.e
 
 export class PartidoJugadoresDatasourceImpl implements PartidoJugadoresDatasource {
 
+    async findByIdPartido(id_partido: number): Promise<PartidoJugadoresEntity[]> {
+        const partidoJugadores = await prisma.partido_Jugadores.findMany({
+            where: { id_partido }
+        });
+
+        return partidoJugadores.map(partidoJugador => PartidoJugadoresEntity.fromObject(partidoJugador));
+    }
+
+    async findByIdJugadorIdPartido(id_jugador: number, id_partido: number): Promise<PartidoJugadoresEntity> {
+        const partidoJugador = await prisma.partido_Jugadores.findFirst({
+            where: { id_jugador, id_partido }
+        });
+
+        if (!partidoJugador) throw `Registro no existe`;
+
+        return PartidoJugadoresEntity.fromObject(partidoJugador);
+
+    }
+
+    async deleteByIdJugadorIdPartido(id_jugador: number, id_partido: number): Promise<{ numero_registros: number }> {
+
+        const deletedPartidoJugadoresIdJugadorIdPartido = await prisma.partido_Jugadores.deleteMany({
+            where: {
+                id_jugador,
+                id_partido
+            }
+        });
+        const numero_registros = deletedPartidoJugadoresIdJugadorIdPartido.count;
+        return { numero_registros };
+    }
+
+    async createIdjugadorIdpartido(createPartidoJugadoresDto: CreatePartidoJugadoresDto): Promise<PartidoJugadoresEntity> {
+
+        const partidoJugador = await prisma.partido_Jugadores.create({
+            data: createPartidoJugadoresDto
+        });
+
+        return PartidoJugadoresEntity.fromObject(partidoJugador);
+    }
+
     async goleadorPorPartido(fecha: string): Promise<{ nombre_corto: string, goles: number }[]> {
 
         const partido = await prisma.partido.findFirst({
@@ -70,8 +110,6 @@ export class PartidoJugadoresDatasourceImpl implements PartidoJugadoresDatasourc
             nombre_corto: DatosDT.find((datoDT: any) => datoDT.id === partidoGanadoComoDT.id_jugador)?.nombre_corto || 'error',
             partidos_ganados_dt: partidoGanadoComoDT._sum.dt_ganador || 0
         }));
-
-        console.log(rankingDt);
 
         return rankingDt;
     }
@@ -292,13 +330,13 @@ export class PartidoJugadoresDatasourceImpl implements PartidoJugadoresDatasourc
     async goleador(): Promise<{ nombre_corto: string, goles: number }[]> {
 
         const goleadoresPorID = await prisma.partido_Jugadores.groupBy({
-            by:['id_jugador'],
-            _sum:{
-                goles:true
+            by: ['id_jugador'],
+            _sum: {
+                goles: true
             },
             orderBy: {
-                _sum:{
-                    goles:'desc'
+                _sum: {
+                    goles: 'desc'
                 }
             },
             where: {
@@ -307,22 +345,22 @@ export class PartidoJugadoresDatasourceImpl implements PartidoJugadoresDatasourc
         });
 
         const datosGoleadores = await prisma.jugador.findMany({
-            where:{
-                id:{
+            where: {
+                id: {
                     in: goleadoresPorID.map(goleadorePorID => goleadorePorID.id_jugador)
                 }
             },
-            select:{
-                id:true,
-                nombre_corto:true
+            select: {
+                id: true,
+                nombre_corto: true
             }
         })
-  
+
         const rankingGoleadores = goleadoresPorID.map(goleadorPorID => ({
             nombre_corto: datosGoleadores.find(datosGoleador => datosGoleador.id === goleadorPorID.id_jugador)?.nombre_corto || 'desconocido',
             goles: goleadorPorID._sum.goles || 0,
         }));
-        
+
         return rankingGoleadores;
     }
 
@@ -361,32 +399,34 @@ export class PartidoJugadoresDatasourceImpl implements PartidoJugadoresDatasourc
 
     async asistenciaPartidos(): Promise<{ nombre_corto: string, numero_asistencias: number }[]> {
 
-        const jugadoresConPartidos = await prisma.partido_Jugadores.findMany({
-            select: {
-                jugador: {
-                    select: {
-                        nombre_corto: true
-                    }
-                },
-                id_jugador: true
-            }
-        });
-
-        // Obtener el conteo de partidos jugados por cada jugador
-        const contadorPartidosPorJugador = await prisma.partido_Jugadores.groupBy({
+        const jugadoresConPartidos = await prisma.partido_Jugadores.groupBy({
             by: ['id_jugador'],
             _count: {
-                id_jugador: true
+                id_partido: true
+            },
+            orderBy: {
+                _count: {
+                    id_partido: 'desc'
+                }
             }
         });
 
-        // Asociar el conteo de partidos con los datos de los jugadores
-        let resultadoFinal = jugadoresConPartidos.map(jugador => ({
-            nombre_corto: jugador.jugador.nombre_corto,
-            numero_asistencias: contadorPartidosPorJugador.find(count => count.id_jugador === jugador.id_jugador)?._count?.id_jugador || 0
-        }));
+        const nombreJugadores = await prisma.jugador.findMany({
+            where: {
+                id: {
+                    in: jugadoresConPartidos.map((jugadorConPartidos) => jugadorConPartidos.id_jugador),
+                },
+            },
+            select: {
+                id: true,
+                nombre_corto: true,
+            },
+        });
 
-        resultadoFinal = resultadoFinal.sort((a, b) => b.numero_asistencias - a.numero_asistencias);
+        const resultadoFinal = jugadoresConPartidos.map((resultado) => ({
+            nombre_corto: nombreJugadores.find((jugador) => jugador.id === resultado.id_jugador)?.nombre_corto || 'Desconocido',
+            numero_asistencias: resultado._count.id_partido || 0,
+        }));
 
         return resultadoFinal;
     }
@@ -400,6 +440,7 @@ export class PartidoJugadoresDatasourceImpl implements PartidoJugadoresDatasourc
     }
 
     async findById(id: number): Promise<PartidoJugadoresEntity> {
+
         const partidoJugador = await prisma.partido_Jugadores.findFirst({
             where: { id }
         });
