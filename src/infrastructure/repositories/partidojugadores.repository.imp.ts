@@ -8,7 +8,7 @@ export class PartidoJugadoresRepositoryImp implements PartidoJugadoresRepository
     constructor(
         private readonly datasource: PartidoJugadoresDatasource,
     ) { }
-    findByIdPartido(id_partido: number): Promise<PartidoJugadoresEntity[]> {
+    findByIdPartido(id_partido: number): Promise<{ numero:number, nombre_corto: string }[]> {
         return this.datasource.findByIdPartido(id_partido);
     }
     findByIdJugadorIdPartido(id_jugador: number, id_partido: number): Promise<PartidoJugadoresEntity> {
