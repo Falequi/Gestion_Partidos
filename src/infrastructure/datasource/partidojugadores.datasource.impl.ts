@@ -21,8 +21,8 @@ export class PartidoJugadoresDatasourceImpl implements PartidoJugadoresDatasourc
             }
         })
 
-        const listaJugadores = jugadores.map((jugador,i)=>({
-            numero: i+1,
+        const listaJugadores = jugadores.map((jugador, i) => ({
+            numero: i + 1,
             nombre_corto: jugador.jugador.nombre_corto,
         }));
 
@@ -139,12 +139,18 @@ export class PartidoJugadoresDatasourceImpl implements PartidoJugadoresDatasourc
             }
         });
 
-        const resultadosPartidoPorEquipos = golesPorEquipo.map(marcadorEquipo => ({
-            id_partido: marcadorEquipo.id_partido,
-            equipo: marcadorEquipo.equipo,
-            marcador: (marcadorEquipo._sum.goles || 0) - (marcadorEquipo._sum.autogoles || 0),
-        }));
+        
+        const resultadosPartidoPorEquipos = golesPorEquipo.map(marcadorEquipo => {
+            const autogol = golesPorEquipo.filter(res => (res._sum.autogoles || 0) > 0 && res.id_partido === marcadorEquipo.id_partido);
+            const autogolesFiltrados = autogol.filter(autogol => marcadorEquipo.id_partido === autogol.id_partido && marcadorEquipo.equipo !== autogol.equipo);
+            const autogoles = autogolesFiltrados.length > 0 ? autogolesFiltrados[0]._sum.autogoles || 0 : 0;
 
+            return {
+                id_partido: marcadorEquipo.id_partido,
+                equipo: marcadorEquipo.equipo,
+                marcador: (marcadorEquipo._sum.goles || 0) + autogoles
+            };
+        });
 
         const resultadosFiltrados: { [key: string]: any } = {};
 
@@ -168,7 +174,7 @@ export class PartidoJugadoresDatasourceImpl implements PartidoJugadoresDatasourc
                 by: ['id_jugador', 'id_partido', 'equipo'],
                 where: {
                     id_partido,
-                    equipo
+                    equipo,
                 }
             });
 
@@ -180,7 +186,7 @@ export class PartidoJugadoresDatasourceImpl implements PartidoJugadoresDatasourc
 
         await Promise.all(arrayJugadores.map(async (jugadores: any) => {
             const jugador = await prisma.jugador.findFirst({
-                where: { id: jugadores.id_jugador },
+                where: { id: jugadores.id_jugador, tipo: 'integrante' },
                 select: {
                     nombre_corto: true
                 }
@@ -188,12 +194,13 @@ export class PartidoJugadoresDatasourceImpl implements PartidoJugadoresDatasourc
             jugadores.nombre_corto = jugador?.nombre_corto;
         }));
 
+        
         // Creamos un mapa para almacenar el resultado de cada partido
         const resultadosPartidos: { [key: number]: boolean } = {};
 
         // Llenamos el mapa con los resultados de cada partido
         arrayJugadores.forEach((jugador: any) => {
-            if (jugador.id_partido && jugador.marcador !== undefined) {
+            if ( jugador.id_partido && jugador.marcador !== undefined) {
                 if (!resultadosPartidos[jugador.id_partido]) {
                     resultadosPartidos[jugador.id_partido] = jugador.marcador > 0;
                 }
@@ -219,7 +226,12 @@ export class PartidoJugadoresDatasourceImpl implements PartidoJugadoresDatasourc
         const resultado: { nombre_corto: string; partidos_ganados_jugador: number }[] = [];
 
         Object.keys(partidosGanados).forEach((id_jugador) => {
-            const jugador = arrayJugadores.find((item: any) => item.id_jugador === parseInt(id_jugador, 10));
+
+            const jugador = arrayJugadores.find((item: any) => {
+                if(item.nombre_corto !== undefined)
+                    return item.id_jugador === parseInt(id_jugador, 10)
+            });
+            
             if (jugador) {
                 resultado.push({
                     nombre_corto: jugador.nombre_corto,
@@ -246,7 +258,7 @@ export class PartidoJugadoresDatasourceImpl implements PartidoJugadoresDatasourc
                 },
             },
             where: {
-                goles_arquero: { gt: 0 }
+                goles_arquero: { gt: 0 },
             }
         });
 
@@ -256,6 +268,7 @@ export class PartidoJugadoresDatasourceImpl implements PartidoJugadoresDatasourc
                 id: {
                     in: resultados.map((resultado) => resultado.id_jugador),
                 },
+                tipo: 'integrante'
             },
             select: {
                 id: true,
@@ -269,7 +282,10 @@ export class PartidoJugadoresDatasourceImpl implements PartidoJugadoresDatasourc
             goles_encajados: resultado._sum.goles_arquero || 0,
         }));
 
-        return resultadoFinal;
+        //Filtrar solo integrantes
+        const resultadoSinInvitados = resultadoFinal.filter(res=> res.nombre_corto !== 'Desconocido')
+
+        return resultadoSinInvitados;
     }
     async tarjetasAmarillas(): Promise<{ nombre_corto: string, tarjetas_amarillas: number }[]> {
         const tAmarillasPorId = await prisma.partido_Jugadores.groupBy({
@@ -364,7 +380,8 @@ export class PartidoJugadoresDatasourceImpl implements PartidoJugadoresDatasourc
             where: {
                 id: {
                     in: goleadoresPorID.map(goleadorePorID => goleadorePorID.id_jugador)
-                }
+                },
+                tipo: 'integrante'
             },
             select: {
                 id: true,
@@ -373,11 +390,13 @@ export class PartidoJugadoresDatasourceImpl implements PartidoJugadoresDatasourc
         })
 
         const rankingGoleadores = goleadoresPorID.map(goleadorPorID => ({
-            nombre_corto: datosGoleadores.find(datosGoleador => datosGoleador.id === goleadorPorID.id_jugador)?.nombre_corto || 'desconocido',
+            nombre_corto: datosGoleadores.find(datosGoleador => datosGoleador.id === goleadorPorID.id_jugador)?.nombre_corto || 'Desconocido',
             goles: goleadorPorID._sum.goles || 0,
         }));
 
-        return rankingGoleadores;
+        const result = rankingGoleadores.filter(res => res.nombre_corto != 'Desconocido')
+
+        return result;
     }
 
     async calificacionPorPartidoJugador(fecha: string): Promise<{ nombre_corto: string, calificacion: number }[]> {
@@ -432,6 +451,7 @@ export class PartidoJugadoresDatasourceImpl implements PartidoJugadoresDatasourc
                 id: {
                     in: jugadoresConPartidos.map((jugadorConPartidos) => jugadorConPartidos.id_jugador),
                 },
+                tipo: 'integrante'
             },
             select: {
                 id: true,
@@ -444,7 +464,10 @@ export class PartidoJugadoresDatasourceImpl implements PartidoJugadoresDatasourc
             numero_asistencias: resultado._count.id_partido || 0,
         }));
 
-        return resultadoFinal;
+        //filtra los usuarios tipo que no son integrantes
+        const result = resultadoFinal.filter((res) => res.nombre_corto != 'Desconocido')
+
+        return result;
     }
 
     async getAll(): Promise<PartidoJugadoresEntity[]> {
