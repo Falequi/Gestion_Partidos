@@ -25,10 +25,11 @@ model Jugador {
   email            String               @db.VarChar
   talla_camiseta   String
   fecha_nacimiento String
-  estado           Boolean
-  tipo             String
+  estado           Boolean              
+  tipo             String               //integrante - invitado 
   id_telegram      String?
   edad             Int?
+  socio            Boolean?
   posiciones       Jugador_Posiciones[] // Campo de relación inversa
   partidos         Partido_Jugadores[]
 }
