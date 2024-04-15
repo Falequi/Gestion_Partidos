@@ -71,6 +71,7 @@ model Partido_Jugadores {
   calificacion    Float? @default(0)
   goles_arquero   Int? 
   dt_ganador      Int?
+  estado_pago     Boolean? @default(false)
   jugador         Jugador @relation(fields: [id_jugador], references: [id])
   partido         Partido @relation(fields: [id_partido], references: [id])
 }

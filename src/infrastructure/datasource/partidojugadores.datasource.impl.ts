@@ -12,6 +12,7 @@ export class PartidoJugadoresDatasourceImpl implements PartidoJugadoresDatasourc
                 id_partido
             },
             select: {
+                estado_pago: true,
                 jugador: {
                     select: {
                         nombre_corto: true,
@@ -21,10 +22,13 @@ export class PartidoJugadoresDatasourceImpl implements PartidoJugadoresDatasourc
             }
         })
 
+        console.log(jugadores)
+
         const listaJugadores = jugadores.map((jugador, i) => ({
             numero: i + 1,
             nombre_corto: jugador.jugador.nombre_corto,
             socio: jugador.jugador.socio,
+            estado_pago: jugador.estado_pago,
         }));
 
         return listaJugadores;
