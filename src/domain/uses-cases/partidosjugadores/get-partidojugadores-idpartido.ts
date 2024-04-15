@@ -1,4 +1,3 @@
-import { PartidoJugadoresEntity } from "../../entities/partidojugadores.entity";
 import { PartidoJugadoresRepository } from "../../repositories/partidojugadores.repository";
 
 export interface GetPartidosJugadoresIdpartidoUseCase {

@@ -6,7 +6,6 @@ import { PartidoJugadoresEntity } from '../../domain/entities/partidojugadores.e
 export class PartidoJugadoresDatasourceImpl implements PartidoJugadoresDatasource {
 
     async findByIdPartido(id_partido: number): Promise<{ numero: number, nombre_corto: string }[]> {
-
         const jugadores = await prisma.partido_Jugadores.findMany({
             relationLoadStrategy: 'join',
             where: {
@@ -15,7 +14,8 @@ export class PartidoJugadoresDatasourceImpl implements PartidoJugadoresDatasourc
             select: {
                 jugador: {
                     select: {
-                        nombre_corto: true
+                        nombre_corto: true,
+                        socio: true,
                     }
                 }
             }
@@ -24,6 +24,7 @@ export class PartidoJugadoresDatasourceImpl implements PartidoJugadoresDatasourc
         const listaJugadores = jugadores.map((jugador, i) => ({
             numero: i + 1,
             nombre_corto: jugador.jugador.nombre_corto,
+            socio: jugador.jugador.socio,
         }));
 
         return listaJugadores;
