@@ -29,7 +29,7 @@ model Jugador {
   tipo             String               //integrante - invitado 
   id_telegram      String?
   edad             Int?
-  socio            Boolean?
+  socio            Boolean?             @default(false)
   posiciones       Jugador_Posiciones[] // Campo de relación inversa
   partidos         Partido_Jugadores[]
 }
