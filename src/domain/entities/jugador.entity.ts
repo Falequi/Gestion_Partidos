@@ -15,7 +15,7 @@ export class JugadorEntity {
       public correo:            string,
       public talla_camiseta:    string,
       public fecha_nacimiento:  Date,
-      public estado:            Boolean,
+      public estado:            boolean,
       public tipo:              string,
       public id_telegram?:      string,
       public edad?:             number,

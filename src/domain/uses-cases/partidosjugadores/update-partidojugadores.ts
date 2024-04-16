@@ -13,6 +13,7 @@ export class UpdatePartidoJugadores implements UpdatePartidoJugadoresUseCase{
     ){}
 
     execute(dto: UpdatePartidoJugadoresDto): Promise<PartidoJugadoresEntity> {
+        console.log("uses case")
         return this.repository.updateById(dto);
     }
 

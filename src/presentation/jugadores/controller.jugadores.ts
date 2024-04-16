@@ -1,5 +1,8 @@
 import { Request, Response } from 'express';
-import { CreateJugador, DeleteJugador, GetJugador, GetJugadorCedula, GetJugadorId, GetJugadorIdTelegram, GetJugadores, JugadorRepository, UpdateJugador } from '../../domain';
+import {
+  CreateJugador, DeleteJugador, GetJugador, GetJugadorCedula, GetJugadorId,
+  GetJugadorIdTelegram, GetJugadores, JugadorRepository, UpdateJugador
+} from '../../domain';
 import { CreateJugadorDto, UpdateJugadorDto } from '../../domain/dto';
 
 
@@ -13,7 +16,7 @@ export class JugadoresController {
 
   public getJugadorIdTelegram = (req: Request, res: Response) => {
     const id_telegram = req.params.id_telegram;
-    
+
     new GetJugadorIdTelegram(this.jugadorRepository)
       .execute(id_telegram)
       .then(jugador => res.json(jugador))
@@ -74,6 +77,7 @@ export class JugadoresController {
 
     const id = +req.params.id;
     const [error, updateJugadorDto] = UpdateJugadorDto.create({ ...req.body, id });
+    
 
     if (error) return res.status(400).json({ error });
 

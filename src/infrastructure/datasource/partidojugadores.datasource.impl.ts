@@ -101,6 +101,7 @@ export class PartidoJugadoresDatasourceImpl implements PartidoJugadoresDatasourc
 
         return rankingGoleadores;
     }
+
     async partidoGanadosComoDt(): Promise<{ nombre_corto: string, partidos_ganados_dt: number }[]> {
         const partidosGanadosComoDT = await prisma.partido_Jugadores.groupBy({
             by: ['id_jugador'],
@@ -136,6 +137,7 @@ export class PartidoJugadoresDatasourceImpl implements PartidoJugadoresDatasourc
 
         return rankingDt;
     }
+
     async partidoGanadosPorJugador(): Promise<{ nombre_corto: string, partidos_ganados_jugador: number }[]> {
 
         const golesPorEquipo = await prisma.partido_Jugadores.groupBy({
@@ -252,6 +254,7 @@ export class PartidoJugadoresDatasourceImpl implements PartidoJugadoresDatasourc
 
         return resultado;
     }
+
     async vayaMenosVencida(): Promise<{ nombre_corto: string, goles_encajados: number }[]> {
 
         const resultados = await prisma.partido_Jugadores.groupBy({
@@ -294,6 +297,7 @@ export class PartidoJugadoresDatasourceImpl implements PartidoJugadoresDatasourc
 
         return resultadoSinInvitados;
     }
+
     async tarjetasAmarillas(): Promise<{ nombre_corto: string, tarjetas_amarillas: number }[]> {
         const tAmarillasPorId = await prisma.partido_Jugadores.groupBy({
             by: ['id_jugador'],
@@ -330,6 +334,7 @@ export class PartidoJugadoresDatasourceImpl implements PartidoJugadoresDatasourc
 
         return ranTAmarillar;
     }
+
     async tarjetasRojas(): Promise<{ nombre_corto: string, tarjetas_rojas: number }[]> {
         const tRojaPorId = await prisma.partido_Jugadores.groupBy({
             by: ['id_jugador'],
@@ -366,6 +371,7 @@ export class PartidoJugadoresDatasourceImpl implements PartidoJugadoresDatasourc
 
         return ranTRojas;
     }
+
     async goleador(): Promise<{ nombre_corto: string, goles: number }[]> {
 
         const goleadoresPorID = await prisma.partido_Jugadores.groupBy({
@@ -545,8 +551,10 @@ export class PartidoJugadoresDatasourceImpl implements PartidoJugadoresDatasourc
 
     async updateById(updatePartidoJugadoresDto: UpdatePartidoJugadoresDto): Promise<PartidoJugadoresEntity> {
 
+        console.log("infra datasoure")
+
         await this.findById(updatePartidoJugadoresDto.id);
-        
+         
         const updatePartidoJugadores = await prisma.partido_Jugadores.update({
             where: { id: updatePartidoJugadoresDto.id },
             data: updatePartidoJugadoresDto!.values

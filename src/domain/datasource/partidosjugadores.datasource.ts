@@ -8,11 +8,10 @@ export abstract class PartidoJugadoresDatasource {
 
 
   //todo: paginación
-  
   abstract getAll(): Promise<PartidoJugadoresEntity[]>;
 
   abstract findById(id: number): Promise<PartidoJugadoresEntity>;
-  abstract findByIdPartido(id_partido: number): Promise<{ numero:number, nombre_corto: string }[]>;
+  abstract findByIdPartido(id_partido: number): Promise<{ numero: number, nombre_corto: string }[]>;
   abstract findByIdJugadorIdPartido(id_jugador: number, id_partido: number): Promise<PartidoJugadoresEntity>;
   abstract create(createPartidoJugadoresDto: CreatePartidoJugadoresDto, nombre_corto: string, fecha: string): Promise<PartidoJugadoresEntity>;
   abstract createIdjugadorIdpartido(createPartidoJugadoresDto: CreatePartidoJugadoresDto): Promise<PartidoJugadoresEntity>;

@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
-import { PartidoJugadoresRepository } from '../../domain/repositories/partidojugadores.repository';
 import {
-    AsistenciaPartidos, CalificacionPorPartidoJugador, CreateAllPartidoJugadores, CreatePartidoJugadoresIdJugadorIdPartido,
+    PartidoJugadoresRepository, AsistenciaPartidos, CalificacionPorPartidoJugador, CreateAllPartidoJugadores,
+    CreatePartidoJugadoresIdJugadorIdPartido,
     CreatePartidoJugadores, DeletePartidoJugadores, DeletePartidoJugadoresIdjugadorIdPartido,
     GetPartidoJugador, GetPartidosJugadores, Goleador, GoleadorPorPartido, PartidosGanadosComoDT,
     PartidosGanadosPorJugador, TarjetasAmarillas, TarjetasRojas, UpdateAllPartidoJugadores,
@@ -141,7 +141,7 @@ export class PartidoJugadoresController {
     public getPartidoJugadoresById = (req: Request, res: Response) => {
 
         const id = +req.params.id;
-        
+
 
         new GetPartidoJugador(this.partidoJugadoresRepository)
             .execute(id)
@@ -174,12 +174,15 @@ export class PartidoJugadoresController {
 
     public updatePartidoJugadores = (req: Request, res: Response) => {
 
+        console.log("controller")
+
         const id = +req.params.id;
 
         const [error, updatePartidoJugadoresDto] = UpdatePartidoJugadoresDto.create({ ...req.body, id });
 
+        
         if (error) return res.status(400).json({ error });
-
+        
         new UpdatePartidoJugadores(this.partidoJugadoresRepository)
             .execute(updatePartidoJugadoresDto!)
             .then(partidojugadores => res.json(partidojugadores))
