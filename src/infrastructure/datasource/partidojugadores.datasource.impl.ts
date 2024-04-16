@@ -12,10 +12,11 @@ export class PartidoJugadoresDatasourceImpl implements PartidoJugadoresDatasourc
                 id_partido
             },
             select: {
+                id: true,
                 estado_pago: true,
                 jugador: {
                     select: {
-                        id:true,
+                        id: true,
                         nombre_corto: true,
                         socio: true,
                     }
@@ -24,8 +25,9 @@ export class PartidoJugadoresDatasourceImpl implements PartidoJugadoresDatasourc
         })
 
         const listaJugadores = jugadores.map((jugador, i) => ({
+            id_partido_jugador: jugador.id,
             numero: i + 1,
-            id:jugador.jugador.id,
+            id: jugador.jugador.id,
             nombre_corto: jugador.jugador.nombre_corto,
             socio: jugador.jugador.socio,
             estado_pago: jugador.estado_pago,
@@ -144,7 +146,7 @@ export class PartidoJugadoresDatasourceImpl implements PartidoJugadoresDatasourc
             }
         });
 
-        
+
         const resultadosPartidoPorEquipos = golesPorEquipo.map(marcadorEquipo => {
             const autogol = golesPorEquipo.filter(res => (res._sum.autogoles || 0) > 0 && res.id_partido === marcadorEquipo.id_partido);
             const autogolesFiltrados = autogol.filter(autogol => marcadorEquipo.id_partido === autogol.id_partido && marcadorEquipo.equipo !== autogol.equipo);
@@ -199,13 +201,13 @@ export class PartidoJugadoresDatasourceImpl implements PartidoJugadoresDatasourc
             jugadores.nombre_corto = jugador?.nombre_corto;
         }));
 
-        
+
         // Creamos un mapa para almacenar el resultado de cada partido
         const resultadosPartidos: { [key: number]: boolean } = {};
 
         // Llenamos el mapa con los resultados de cada partido
         arrayJugadores.forEach((jugador: any) => {
-            if ( jugador.id_partido && jugador.marcador !== undefined) {
+            if (jugador.id_partido && jugador.marcador !== undefined) {
                 if (!resultadosPartidos[jugador.id_partido]) {
                     resultadosPartidos[jugador.id_partido] = jugador.marcador > 0;
                 }
@@ -233,10 +235,10 @@ export class PartidoJugadoresDatasourceImpl implements PartidoJugadoresDatasourc
         Object.keys(partidosGanados).forEach((id_jugador) => {
 
             const jugador = arrayJugadores.find((item: any) => {
-                if(item.nombre_corto !== undefined)
+                if (item.nombre_corto !== undefined)
                     return item.id_jugador === parseInt(id_jugador, 10)
             });
-            
+
             if (jugador) {
                 resultado.push({
                     nombre_corto: jugador.nombre_corto,
@@ -288,7 +290,7 @@ export class PartidoJugadoresDatasourceImpl implements PartidoJugadoresDatasourc
         }));
 
         //Filtrar solo integrantes
-        const resultadoSinInvitados = resultadoFinal.filter(res=> res.nombre_corto !== 'Desconocido')
+        const resultadoSinInvitados = resultadoFinal.filter(res => res.nombre_corto !== 'Desconocido')
 
         return resultadoSinInvitados;
     }
