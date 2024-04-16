@@ -8,6 +8,7 @@ export abstract class PartidoJugadoresDatasource {
 
 
   //todo: paginación
+  
   abstract getAll(): Promise<PartidoJugadoresEntity[]>;
 
   abstract findById(id: number): Promise<PartidoJugadoresEntity>;

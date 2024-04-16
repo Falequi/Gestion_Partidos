@@ -68,8 +68,6 @@ export class JugadorDatasourceImpl implements JugadorDatasource {
 
     await this.findById(updateJugadorDto.id);
 
-    console.log(updateJugadorDto.values)
-
     const updatedJugador = await prisma.jugador.update({
       where: { id: updateJugadorDto.id },
       data: updateJugadorDto!.values

@@ -18,9 +18,11 @@ export class UpdatePartidoJugadoresDto {
         public readonly calificacion: number,
         public readonly goles_arquero: number,
         public readonly dt_ganador: number,
+        public readonly estado_pago: boolean,
+        
     ) { }
 
-    get values() {
+    get values() {  
 
         const returnObj: { [key: string]: any } = {};
 
@@ -35,6 +37,9 @@ export class UpdatePartidoJugadoresDto {
         if (this.calificacion) returnObj.calificacion           = this.calificacion
         if (this.goles_arquero) returnObj.goles_arquero         = this.goles_arquero
         if (this.dt_ganador) returnObj.dt_ganador               = this.dt_ganador
+        if (this.estado_pago) returnObj.estado_pago             = this.estado_pago
+
+        // console.log(returnObj)
 
         return returnObj;
     }
@@ -44,14 +49,14 @@ export class UpdatePartidoJugadoresDto {
         const { id, id_jugador, id_partido, equipo,
             tarjeta_amarilla, tarjeta_roja, goles,
             autogoles, comentarios, calificacion,
-            goles_arquero, dt_ganador
+            goles_arquero, dt_ganador, estado_pago
         } = props;
 
         return [undefined,
             new UpdatePartidoJugadoresDto(id, id_jugador, id_partido, equipo,
                 tarjeta_amarilla, tarjeta_roja, goles,
                 autogoles, comentarios, calificacion,
-                goles_arquero, dt_ganador)];
+                goles_arquero, dt_ganador, estado_pago)];
     }
 
 }

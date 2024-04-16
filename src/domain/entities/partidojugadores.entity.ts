@@ -16,13 +16,14 @@ export class PartidoJugadoresEntity {
         public calificacion:    number,
         public goles_arquero:   number,
         public dt_ganador:      number,
+        public estado_pago:     boolean,
     ) { }
 
     public static fromObject(object: { [key: string]: any }): PartidoJugadoresEntity {
         const { id, id_jugador, id_partido, equipo,
             tarjeta_amarilla, tarjeta_roja, goles,
             autogoles, comentarios, calificacion,
-            goles_arquero, dt_ganador
+            goles_arquero, dt_ganador, estado_pago,
         } = object;
 
         //if ( !id ) throw 'Id is required';
@@ -31,7 +32,7 @@ export class PartidoJugadoresEntity {
             id, id_jugador, id_partido, equipo,
             tarjeta_amarilla, tarjeta_roja, goles,
             autogoles, comentarios, calificacion,
-            goles_arquero, dt_ganador);
+            goles_arquero, dt_ganador, estado_pago);
 
     }
 }

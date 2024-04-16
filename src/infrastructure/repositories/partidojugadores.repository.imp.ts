@@ -11,6 +11,7 @@ export class PartidoJugadoresRepositoryImp implements PartidoJugadoresRepository
     findByIdPartido(id_partido: number): Promise<{ numero:number, nombre_corto: string }[]> {
         return this.datasource.findByIdPartido(id_partido);
     }
+    
     findByIdJugadorIdPartido(id_jugador: number, id_partido: number): Promise<PartidoJugadoresEntity> {
         return this.datasource.findByIdJugadorIdPartido(id_jugador, id_partido);
     }
@@ -58,7 +59,7 @@ export class PartidoJugadoresRepositoryImp implements PartidoJugadoresRepository
         return this.datasource.getAll();
     }
     findById(id: number): Promise<PartidoJugadoresEntity> {
-        return this.datasource.deleteById(id);
+        return this.datasource.findById(id);
     }
     create(createPartidoJugadoresDto: CreatePartidoJugadoresDto, nombre_corto: string, fecha: string): Promise<PartidoJugadoresEntity> {
         return this.datasource.create(createPartidoJugadoresDto, nombre_corto, fecha);

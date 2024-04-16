@@ -546,11 +546,12 @@ export class PartidoJugadoresDatasourceImpl implements PartidoJugadoresDatasourc
     async updateById(updatePartidoJugadoresDto: UpdatePartidoJugadoresDto): Promise<PartidoJugadoresEntity> {
 
         await this.findById(updatePartidoJugadoresDto.id);
-
+        
         const updatePartidoJugadores = await prisma.partido_Jugadores.update({
             where: { id: updatePartidoJugadoresDto.id },
-            data: updatePartidoJugadoresDto.values
+            data: updatePartidoJugadoresDto!.values
         });
+        
 
         return PartidoJugadoresEntity!.fromObject(updatePartidoJugadores);
     }
