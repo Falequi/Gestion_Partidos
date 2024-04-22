@@ -6,21 +6,21 @@ import { CreateJugadorDto, UpdateJugadorDto } from '../../domain/dto';
 export class JugadorDatasourceImpl implements JugadorDatasource {
 
   async findByIdTelegram(id_telegram: string): Promise<JugadorEntity | boolean> {
-    
-      
-        const jugador = await prisma.jugador.findFirst({
-          where: { id_telegram }
-        });
-      
-        if(!jugador) return false;
 
-        return JugadorEntity.fromObject(jugador!);
-      
-  }
-  
-  async findByCedula(cedula: string): Promise<JugadorEntity>{
+
     const jugador = await prisma.jugador.findFirst({
-      where:{cedula}
+      where: { id_telegram }
+    });
+
+    if (!jugador) return false;
+
+    return JugadorEntity.fromObject(jugador!);
+
+  }
+
+  async findByCedula(cedula: string): Promise<JugadorEntity> {
+    const jugador = await prisma.jugador.findFirst({
+      where: { cedula }
     });
 
     return JugadorEntity.fromObject(jugador!);
@@ -29,7 +29,7 @@ export class JugadorDatasourceImpl implements JugadorDatasource {
   async findIdByName(nombre_corto: string): Promise<number> {
 
     const jugador = await prisma.jugador.findFirst({
-      where:{
+      where: {
         nombre_corto
       }
     });

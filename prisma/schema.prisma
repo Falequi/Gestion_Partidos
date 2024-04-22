@@ -25,7 +25,7 @@ model Jugador {
   email            String               @db.VarChar
   talla_camiseta   String
   fecha_nacimiento String
-  estado           Boolean              
+  estado           Boolean              @default(true)         
   tipo             String               //integrante - invitado 
   id_telegram      String?
   edad             Int?
@@ -48,14 +48,25 @@ model Posicion {
   posicion   String
   sigla      String
   posiciones Jugador_Posiciones[]
+
+}
+
+model Tipo_Partido {
+  id          Int   @id @default(autoincrement())
+  tipo        String
+  descripcion String
+  partidos    Partido[]     
 }
 
 model Partido {
-  id        Int                 @id @default(autoincrement())
-  fecha     String
-  lugar     String
-  hora      String
-  jugadores Partido_Jugadores[]
+  id            Int   @id @default(autoincrement())
+  id_tipo       Int?                 
+  fecha         String
+  lugar         String
+  hora          String
+  valor         Int?
+  jugadores     Partido_Jugadores[]
+  tipo_partido  Tipo_Partido? @relation(fields: [id_tipo], references: [id])
 }
 
 model Partido_Jugadores {
@@ -71,7 +82,7 @@ model Partido_Jugadores {
   calificacion    Float? @default(0)
   goles_arquero   Int? 
   dt_ganador      Int?
-  estado_pago     Boolean? 
+  estado_pago     Boolean? @default(false)
   jugador         Jugador @relation(fields: [id_jugador], references: [id])
   partido         Partido @relation(fields: [id_partido], references: [id])
 }
