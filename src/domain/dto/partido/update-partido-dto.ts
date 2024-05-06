@@ -4,27 +4,27 @@ export class UpdatePartidoDto {
 
     private constructor(
         public readonly id: number,
-        public readonly id_tipo: number,
         public readonly fecha: string,
         public readonly lugar: string,
         public readonly hora: string,
+        public readonly id_tipo: number,
     ) { }
 
     get values() {
 
         const returnObj: { [key: string]: any } = {};
 
-        if (this.id_tipo) returnObj.id_tipo = this.hora;
         if (this.fecha) returnObj.fecha = this.fecha;
         if (this.lugar) returnObj.lugar = this.lugar;
         if (this.hora) returnObj.hora = this.hora;
+        if (this.id_tipo) returnObj.id_tipo = this.id_tipo;
         
         return returnObj;
     }
 
     static create(props: { [key: string]: any }): [string?, UpdatePartidoDto?] {
 
-        const { id,id_tipo,fecha,lugar,hora } = props;
+        const { id,fecha,lugar,hora,id_tipo } = props;
         
             let newfechanacimiento = new Date();
 
@@ -38,7 +38,7 @@ export class UpdatePartidoDto {
         }
 
         return [undefined,
-            new UpdatePartidoDto(id,id_tipo,fecha,lugar,hora)];
+            new UpdatePartidoDto(id,fecha,lugar,hora,id_tipo)];
     }
 
 }

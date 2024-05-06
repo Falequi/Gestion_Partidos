@@ -60,7 +60,7 @@ model Tipo_Partido {
 
 model Partido {
   id            Int   @id @default(autoincrement())
-  id_tipo       Int?                 
+  id_tipo       Int?  @default(1)               
   fecha         String
   lugar         String
   hora          String
