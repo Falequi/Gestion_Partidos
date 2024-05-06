@@ -4,6 +4,7 @@ export class UpdatePartidoDto {
 
     private constructor(
         public readonly id: number,
+        public readonly id_tipo: number,
         public readonly fecha: string,
         public readonly lugar: string,
         public readonly hora: string,
@@ -13,6 +14,7 @@ export class UpdatePartidoDto {
 
         const returnObj: { [key: string]: any } = {};
 
+        if (this.id_tipo) returnObj.id_tipo = this.hora;
         if (this.fecha) returnObj.fecha = this.fecha;
         if (this.lugar) returnObj.lugar = this.lugar;
         if (this.hora) returnObj.hora = this.hora;
@@ -22,7 +24,7 @@ export class UpdatePartidoDto {
 
     static create(props: { [key: string]: any }): [string?, UpdatePartidoDto?] {
 
-        const { id,fecha,lugar,hora } = props;
+        const { id,id_tipo,fecha,lugar,hora } = props;
         
             let newfechanacimiento = new Date();
 
@@ -36,7 +38,7 @@ export class UpdatePartidoDto {
         }
 
         return [undefined,
-            new UpdatePartidoDto(id,fecha,lugar,hora)];
+            new UpdatePartidoDto(id,id_tipo,fecha,lugar,hora)];
     }
 
 }

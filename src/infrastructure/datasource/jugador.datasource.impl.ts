@@ -20,9 +20,18 @@ export class JugadorDatasourceImpl implements JugadorDatasource {
 
   async findByCedula(cedula: string): Promise<JugadorEntity> {
     const jugador = await prisma.jugador.findFirst({
-      where: { cedula }
+      relationLoadStrategy: 'join',
+      where: { cedula },
+      include:{
+        posiciones: {
+          where:{tipo: 'Principal'},
+          include:{
+            posicion:true,
+          }
+        },
+      }
     });
-
+    
     return JugadorEntity.fromObject(jugador!);
   }
 
