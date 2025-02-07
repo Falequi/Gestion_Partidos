@@ -6,8 +6,6 @@ import { CreateJugadorDto, UpdateJugadorDto } from '../../domain/dto';
 export class JugadorDatasourceImpl implements JugadorDatasource {
 
   async findByIdTelegram(id_telegram: string): Promise<JugadorEntity | boolean> {
-
-
     const jugador = await prisma.jugador.findFirst({
       where: { id_telegram }
     });
@@ -19,6 +17,7 @@ export class JugadorDatasourceImpl implements JugadorDatasource {
   }
 
   async findByCedula(cedula: string): Promise<JugadorEntity> {
+
     const jugador = await prisma.jugador.findFirst({
       relationLoadStrategy: 'join',
       where: { cedula },
@@ -55,6 +54,8 @@ export class JugadorDatasourceImpl implements JugadorDatasource {
 
   async create(createJugadorDto: CreateJugadorDto): Promise<JugadorEntity> {
 
+    //Deberia de validar si la cedula y el correo electronico ya existen
+
     const jugador = await prisma.jugador.create({
       data: createJugadorDto!
     });
@@ -68,7 +69,7 @@ export class JugadorDatasourceImpl implements JugadorDatasource {
       where: { id }
     });
 
-    if (!jugador) throw `Jugador with id ${id} not found`;
+    if (!jugador) throw `Jugador with id ${id} not exists`;
 
     return JugadorEntity.fromObject(jugador);
   }
@@ -79,7 +80,7 @@ export class JugadorDatasourceImpl implements JugadorDatasource {
 
     const updatedJugador = await prisma.jugador.update({
       where: { id: updateJugadorDto.id },
-      data: updateJugadorDto!.values
+      data: updateJugadorDto
     });
 
     return JugadorEntity!.fromObject(updatedJugador);
@@ -87,6 +88,9 @@ export class JugadorDatasourceImpl implements JugadorDatasource {
 
   async deleteById(id: number): Promise<JugadorEntity> {
 
+    //:TODO En el momento no borra Jugadores que tengan otros registros relacionados en otras tablas 
+    // Es mejor deshabilitar el jugador y no borrar los registro se debe mejorar eso.
+    
     await this.findById(id);
 
     const deletedJugador = await prisma.jugador.delete({

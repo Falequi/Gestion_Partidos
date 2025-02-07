@@ -29,9 +29,10 @@ export class CreatePartidoJugadoresDto {
             autogoles, comentarios, calificacion,
             goles_arquero, dt_ganador
         } = props;
+
+        if (!id_jugador) return ['id_jugador is required', undefined];
+        if (!id_partido) return ['id_partido is required', undefined];
         
-
-
         return [undefined,
             new CreatePartidoJugadoresDto(id_jugador, id_partido, equipo,
                 tarjeta_amarilla, tarjeta_roja, goles,

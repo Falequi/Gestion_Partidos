@@ -6,7 +6,8 @@ import {
     GetPartidoJugador, GetPartidosJugadores, Goleador, GoleadorPorPartido, PartidosGanadosComoDT,
     PartidosGanadosPorJugador, TarjetasAmarillas, TarjetasRojas, UpdateAllPartidoJugadores,
     UpdatePartidoJugadores, VayaMenosVencida,
-    GetPartidosJugadoresIdpartido
+    GetPartidosJugadoresIdpartido,
+    PartidosMarcador
 } from '../../domain';
 import { CreatePartidoJugadoresDto } from '../../domain/dto/partido_jugadores/create-partidojugadores-dto';
 import { UpdatePartidoJugadoresDto } from '../../domain/dto/partido_jugadores/update-partidojugadores-dto';
@@ -174,8 +175,6 @@ export class PartidoJugadoresController {
 
     public updatePartidoJugadores = (req: Request, res: Response) => {
 
-        console.log("controller")
-
         const id = +req.params.id;
 
         const [error, updatePartidoJugadoresDto] = UpdatePartidoJugadoresDto.create({ ...req.body, id });
@@ -205,6 +204,13 @@ export class PartidoJugadoresController {
         new UpdateAllPartidoJugadores(this.partidoJugadoresRepository)
             .execute(req.body)
             .then(partidoJugadores => res.json(partidoJugadores))
+            .catch(error => res.status(400).json({ error }))
+    }
+
+    public getPartidosMarcadores = (req: Request, res: Response) => {
+        new PartidosMarcador(this.partidoJugadoresRepository)
+            .execute()
+            .then(partidosMarcador => res.json(partidosMarcador))
             .catch(error => res.status(400).json({ error }))
     }
 

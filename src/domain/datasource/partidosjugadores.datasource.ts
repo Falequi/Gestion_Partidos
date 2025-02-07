@@ -11,7 +11,7 @@ export abstract class PartidoJugadoresDatasource {
   abstract getAll(): Promise<PartidoJugadoresEntity[]>;
 
   abstract findById(id: number): Promise<PartidoJugadoresEntity>;
-  abstract findByIdPartido(id_partido: number): Promise<{ numero: number, nombre_corto: string }[]>;
+  abstract findByIdPartido(id_partido: number): Promise<{[key: string]: any}>;
   abstract findByIdJugadorIdPartido(id_jugador: number, id_partido: number): Promise<PartidoJugadoresEntity>;
   abstract create(createPartidoJugadoresDto: CreatePartidoJugadoresDto, nombre_corto: string, fecha: string): Promise<PartidoJugadoresEntity>;
   abstract createIdjugadorIdpartido(createPartidoJugadoresDto: CreatePartidoJugadoresDto): Promise<PartidoJugadoresEntity>;
@@ -32,4 +32,5 @@ export abstract class PartidoJugadoresDatasource {
   abstract vayaMenosVencida(): Promise<{ nombre_corto: string, goles_encajados: number }[]>;
   abstract tarjetasAmarillas(): Promise<{ nombre_corto: string, tarjetas_amarillas: number }[]>;
   abstract tarjetasRojas(): Promise<{ nombre_corto: string, tarjetas_rojas: number }[]>;
+  abstract partidoMarcadores(): Promise<{ [key: string]: any }[]>;
 }

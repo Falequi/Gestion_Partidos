@@ -2,41 +2,74 @@ import { prisma } from "../../data/postgres";
 import { CreatePartidoJugadoresDto, UpdatePartidoJugadoresDto } from "../../domain/dto";
 import { PartidoJugadoresDatasource } from "../../domain/datasource/partidosjugadores.datasource";
 import { PartidoJugadoresEntity } from '../../domain/entities/partidojugadores.entity';
+import { count, error } from "console";
 
 export class PartidoJugadoresDatasourceImpl implements PartidoJugadoresDatasource {
 
-    async findByIdPartido(id_partido: number): Promise<{ numero: number, nombre_corto: string }[]> {
+    async findByIdPartido(id_partido: number): Promise<{ [key: string]: any }> {
+
         const jugadores = await prisma.partido_Jugadores.findMany({
             relationLoadStrategy: 'join',
             where: {
                 id_partido
             },
             select: {
-                id: true,
+                equipo: true,
+                tarjeta_amarilla: true,
+                tarjeta_roja: true,
+                goles: true,
+                autogoles: true,
                 estado_pago: true,
+                calificacion: true,
                 jugador: {
                     select: {
                         id: true,
                         nombre_corto: true,
                         socio: true,
                     }
+                },
+                partido: {
+                    select: {
+                        fecha: true,
+                        lugar: true,
+                        id_tipo: true,
+                        tipo_partido: {
+                            select: {
+                                tipo: true,
+                                descripcion: true,
+                            }
+                        }
+                    }
                 }
             }
-        })
+        });
 
         const listaJugadores = jugadores.map((jugador, i) => ({
-            id_partido_jugador: jugador.id,
-            numero: i + 1,
-            id: jugador.jugador.id,
             nombre_corto: jugador.jugador.nombre_corto,
+            equipo: jugador.equipo,
+            tarjeta_amarilla: jugador.tarjeta_amarilla,
+            tarjeta_roja: jugador.tarjeta_roja,
+            goles: jugador.goles,
+            autogoles: jugador.autogoles,
+            calificacion: jugador.calificacion,
             socio: jugador.jugador.socio,
             estado_pago: jugador.estado_pago,
         }));
 
-        return listaJugadores;
+        const infoPartido = {
+            "lugar": jugadores[0].partido.lugar,
+            "fecha": jugadores[0].partido.fecha,
+            "tipo_partido": jugadores[0].partido.tipo_partido?.tipo,
+            "descripcion": jugadores[0].partido.tipo_partido?.descripcion,
+            "Numero_Jugadores": jugadores.length,
+            "jugadores": listaJugadores
+        }
+
+        return infoPartido;
     }
 
     async findByIdJugadorIdPartido(id_jugador: number, id_partido: number): Promise<PartidoJugadoresEntity> {
+
         const partidoJugador = await prisma.partido_Jugadores.findFirst({
             where: { id_jugador, id_partido }
         });
@@ -60,6 +93,12 @@ export class PartidoJugadoresDatasourceImpl implements PartidoJugadoresDatasourc
     }
 
     async createIdjugadorIdpartido(createPartidoJugadoresDto: CreatePartidoJugadoresDto): Promise<PartidoJugadoresEntity> {
+
+        const { id_jugador, id_partido } = createPartidoJugadoresDto;
+
+        const IdJugadorIdPartido = await this.findByIdJugadorIdPartido(id_jugador, id_partido);
+
+        if (IdJugadorIdPartido) throw `The record already exists`;
 
         const partidoJugador = await prisma.partido_Jugadores.create({
             data: createPartidoJugadoresDto
@@ -87,6 +126,7 @@ export class PartidoJugadoresDatasourceImpl implements PartidoJugadoresDatasourc
                     }
                 },
                 goles: true,
+                autogoles: true,
             },
             orderBy: {
                 goles: 'desc'
@@ -95,7 +135,7 @@ export class PartidoJugadoresDatasourceImpl implements PartidoJugadoresDatasourc
 
         const rankingGoleadores = goleadores.map(goleador => ({
             nombre_corto: goleador.jugador.nombre_corto,
-            goles: goleador.goles || 0,
+            goles: (goleador.goles || 0) - (goleador.autogoles || 0),
         }));
 
 
@@ -103,6 +143,7 @@ export class PartidoJugadoresDatasourceImpl implements PartidoJugadoresDatasourc
     }
 
     async partidoGanadosComoDt(): Promise<{ nombre_corto: string, partidos_ganados_dt: number }[]> {
+
         const partidosGanadosComoDT = await prisma.partido_Jugadores.groupBy({
             by: ['id_jugador'],
             _sum: {
@@ -148,7 +189,6 @@ export class PartidoJugadoresDatasourceImpl implements PartidoJugadoresDatasourc
             }
         });
 
-
         const resultadosPartidoPorEquipos = golesPorEquipo.map(marcadorEquipo => {
             const autogol = golesPorEquipo.filter(res => (res._sum.autogoles || 0) > 0 && res.id_partido === marcadorEquipo.id_partido);
             const autogolesFiltrados = autogol.filter(autogol => marcadorEquipo.id_partido === autogol.id_partido && marcadorEquipo.equipo !== autogol.equipo);
@@ -160,6 +200,7 @@ export class PartidoJugadoresDatasourceImpl implements PartidoJugadoresDatasourc
                 marcador: (marcadorEquipo._sum.goles || 0) + autogoles
             };
         });
+
 
         const resultadosFiltrados: { [key: string]: any } = {};
 
@@ -374,10 +415,12 @@ export class PartidoJugadoresDatasourceImpl implements PartidoJugadoresDatasourc
 
     async goleador(): Promise<{ nombre_corto: string, goles: number }[]> {
 
+        //Suma los goles y autogoles y el id del jugador
         const goleadoresPorID = await prisma.partido_Jugadores.groupBy({
             by: ['id_jugador'],
             _sum: {
-                goles: true
+                goles: true,
+                autogoles: true
             },
             orderBy: {
                 _sum: {
@@ -389,6 +432,7 @@ export class PartidoJugadoresDatasourceImpl implements PartidoJugadoresDatasourc
             }
         });
 
+        // Tarea el ID_del Jugador y el Nombre Corto
         const datosGoleadores = await prisma.jugador.findMany({
             where: {
                 id: {
@@ -404,7 +448,7 @@ export class PartidoJugadoresDatasourceImpl implements PartidoJugadoresDatasourc
 
         const rankingGoleadores = goleadoresPorID.map(goleadorPorID => ({
             nombre_corto: datosGoleadores.find(datosGoleador => datosGoleador.id === goleadorPorID.id_jugador)?.nombre_corto || 'Desconocido',
-            goles: goleadorPorID._sum.goles || 0,
+            goles: (goleadorPorID._sum.goles || 0) - (goleadorPorID._sum.autogoles || 0),
         }));
 
         const result = rankingGoleadores.filter(res => res.nombre_corto != 'Desconocido')
@@ -434,7 +478,7 @@ export class PartidoJugadoresDatasourceImpl implements PartidoJugadoresDatasourc
             orderBy: {
                 calificacion: 'desc'
             },
-            take: 5
+            // take: 5
         })
 
         const ranking = jugadores.map(jugador => ({
@@ -525,16 +569,24 @@ export class PartidoJugadoresDatasourceImpl implements PartidoJugadoresDatasourc
         return PartidoJugadoresEntity.fromObject(partidoJugador);
     }
 
-    async createAll(partidoJugadores: [{
-        [key: string]: any;
-    }]): Promise<{ mesage: any }> {
+    async createAll(partidoJugadores: [{ [key: string]: any; }]): Promise<{ mesage: any }> {
+
+        //:TODO falta validar si el registro ya existe que no se vuelva a ingresar
 
         const promesasPartido = partidoJugadores.map(async partidoJugador => {
+
             const jugador = await prisma.jugador.findFirst({ where: { nombre_corto: partidoJugador.nombre_corto } });
+            if (!jugador) throw (`No se encontró un jugador ${partidoJugador.nombre_corto}`);
+
             const partido = await prisma.partido.findFirst({ where: { fecha: partidoJugador.fecha } });
+            if (!partido) throw (`No se encontró un partido de la fecha  ${partidoJugador.fecha}`);
+
             partidoJugador.id_jugador = jugador!.id;
             partidoJugador.id_partido = partido!.id;
+
             const [error, createPartidoJugadoresDto] = CreatePartidoJugadoresDto.create(partidoJugador);
+            if (error) throw error;
+
             return createPartidoJugadoresDto;
         });
 
@@ -551,15 +603,13 @@ export class PartidoJugadoresDatasourceImpl implements PartidoJugadoresDatasourc
 
     async updateById(updatePartidoJugadoresDto: UpdatePartidoJugadoresDto): Promise<PartidoJugadoresEntity> {
 
-        console.log("infra datasoure")
-
         await this.findById(updatePartidoJugadoresDto.id);
-         
+
         const updatePartidoJugadores = await prisma.partido_Jugadores.update({
             where: { id: updatePartidoJugadoresDto.id },
             data: updatePartidoJugadoresDto!.values
         });
-        
+
 
         return PartidoJugadoresEntity!.fromObject(updatePartidoJugadores);
     }
@@ -601,4 +651,90 @@ export class PartidoJugadoresDatasourceImpl implements PartidoJugadoresDatasourc
 
     }
 
+    async partidoMarcadores(): Promise<{ [key: string]: any; }[]> {
+        try {
+            // Consulta todos los partidos y sus jugadores relacionados
+            const partidos = await prisma.partido.findMany({
+                include: {
+                    jugadores: {
+                        include: {
+                            jugador: true, // Incluye la información del jugador relacionado
+                        },
+                    },
+                },
+            });
+
+            
+
+            // Mapea cada partido a su resultado correspondiente
+            const resultados = partidos.map((partido) => {
+                // Inicializamos el marcador para el partido actual
+                const marcador: {
+                    equipo1: number;
+                    equipo2: number;
+                    golesEquipo1: string[];
+                    golesEquipo2: string[];
+                    autogolesEquipo1: string[];
+                    autogolesEquipo2: string[];
+                } = {
+                    equipo1: 0,
+                    equipo2: 0,
+                    golesEquipo1: [],
+                    golesEquipo2: [],
+                    autogolesEquipo1: [],
+                    autogolesEquipo2: [],
+                };
+
+                let equipos: string[] = [];
+                // Procesamos los jugadores del partido actual
+                partido.jugadores.forEach((participacion) => {
+                    equipos = Array.from(new Set(partido.jugadores.map((jugador) => jugador.equipo)));
+
+                    if (equipos.length !== 2) {
+                        throw  `Partido inválido con ${equipos.length} equipos en la fecha: ${partido.fecha}`;
+                    }   
+
+                    const { equipo, goles = 0, autogoles = 0, jugador } = participacion;
+
+                    if (equipo === equipos[0]) {
+                        marcador.equipo1 += goles || 0; 
+                        marcador.equipo2 += autogoles || 0; 
+                        if (goles || 0 > 0) marcador.golesEquipo1.push(jugador.nombre_corto);
+                        if (autogoles || 0 > 0) marcador.autogolesEquipo1.push(jugador.nombre_corto);
+                    } else if (equipo === equipos[1]) {
+                        marcador.equipo2 += goles || 0;
+                        marcador.equipo1 += autogoles || 0;
+                        if (goles || 0 > 0) marcador.golesEquipo2.push(jugador.nombre_corto);
+                        if (autogoles || 0 > 0) marcador.autogolesEquipo2.push(jugador.nombre_corto);
+                    }
+                });
+
+                // Retorna el resultado del partido actual
+                return {
+                    fecha: partido.fecha,
+                    lugar: partido.lugar,
+                    marcadorEquipo1: marcador.equipo1,
+                    marcadorEquipo2: marcador.equipo2,
+                    equipoGanador:
+                        marcador.equipo1 > marcador.equipo2
+                            ? equipos[0]
+                            : marcador.equipo1 < marcador.equipo2
+                                ? equipos[1]
+                                : "Empate",
+                    golesEquipo1: marcador.golesEquipo1,
+                    golesEquipo2: marcador.golesEquipo2,
+                    autogolesEquipo1: marcador.autogolesEquipo1,
+                    autogolesEquipo2: marcador.autogolesEquipo2,
+                };
+            });
+
+            // Retorna todos los resultados
+            return resultados;
+        } catch (error) {
+            console.error("Error al consultar los resultados de los partidos:", error);
+            return [];
+        } finally {
+            await prisma.$disconnect();
+        }
+    }
 }

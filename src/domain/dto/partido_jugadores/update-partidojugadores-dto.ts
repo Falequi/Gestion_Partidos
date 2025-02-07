@@ -25,9 +25,6 @@ export class UpdatePartidoJugadoresDto {
 
     get values() {
 
-        console.log("dto. values");
-        console.log("estado pago ", this.estado_pago)
-        console.log("tarjeta roja ", this.tarjeta_roja)
         const returnObj: { [key: string]: any } = {};
 
         if (this.id_jugador != undefined) returnObj.id_jugador = this.id_jugador
@@ -47,8 +44,6 @@ export class UpdatePartidoJugadoresDto {
     }
 
     static create(props: { [key: string]: any }): [string?, UpdatePartidoJugadoresDto?] {
-
-        console.log("dto. create")
 
         const { id, id_jugador, id_partido, equipo,
             tarjeta_amarilla, tarjeta_roja, goles,

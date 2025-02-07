@@ -1,7 +1,7 @@
 import { PartidoJugadoresRepository } from "../../repositories/partidojugadores.repository";
 
 export interface GetPartidosJugadoresIdpartidoUseCase {
-    execute(id_partido: number): Promise<{ numero:number, nombre_corto: string }[]>
+    execute(id_partido: number): Promise<{ [key: string]: any }>
 }
 
 export class GetPartidosJugadoresIdpartido implements GetPartidosJugadoresIdpartidoUseCase {
@@ -10,7 +10,7 @@ export class GetPartidosJugadoresIdpartido implements GetPartidosJugadoresIdpart
         private readonly repository: PartidoJugadoresRepository,
     ) { }
 
-    execute(id_partido: number): Promise<{ numero:number, nombre_corto: string }[]> {
+    execute(id_partido: number): Promise<{ [key: string]: any }> {
         return this.repository.findByIdPartido(id_partido);
     }
 

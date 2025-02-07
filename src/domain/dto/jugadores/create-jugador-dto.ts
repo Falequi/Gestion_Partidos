@@ -25,20 +25,29 @@ export class CreateJugadorDto {
         const { nombres, apellidos, nombre_corto, cedula,
             RH, telefono, email, talla_camiseta, fecha_nacimiento, estado, tipo } = props;
 
+        if (!nombres) return ['nombres is required', undefined];
+        if (!apellidos) return ['apellidos is required', undefined];
+        if (!nombre_corto) return ['nombre_corto is required', undefined];
+        if (!cedula) return ['cedula is required', undefined];
+        if (!RH) return ['RH is required', undefined];
+        if (!telefono) return ['telefono is required', undefined];
+        if (!email) return ['email is required', undefined];
+        if (!talla_camiseta) return ['talla_camiseta is required', undefined];
+
         if (!fecha_nacimiento) return ['Fecha de Nacimiento is required', undefined];
-        
+
         if (!tipo) props.tipo = 'invitado';
+
+        props.socio = false;
         props.id_telegram = null;
         props.edad = Edad.calcular(fecha_nacimiento);
-        props.socio = true;
-
 
         const { edad, id_telegram, socio } = props;
 
 
         return [undefined,
             new CreateJugadorDto(nombres, apellidos, nombre_corto, cedula, RH,
-                telefono, email, talla_camiseta, fecha_nacimiento, estado, tipo,
+                telefono, email, talla_camiseta, fecha_nacimiento, estado, props.tipo,
                 id_telegram, edad, socio)];
     }
 

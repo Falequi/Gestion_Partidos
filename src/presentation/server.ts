@@ -14,6 +14,7 @@ export class Server {
     private readonly routes: Router;
 
     constructor(options: Options) {
+
         const { port, routes, public_path = 'public' } = options;
 
         this.port = port;
@@ -24,7 +25,6 @@ export class Server {
     async start() {
 
         //* Middlewares
-
         this.app.use( express.json()); //Para recibir datos tipo raw
         this.app.use( express.urlencoded({ extended: true})); //Para recibir datos tipo x-www-form-urlencode
 

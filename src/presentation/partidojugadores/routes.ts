@@ -13,12 +13,14 @@ export class PartidoJugadoresRoutes{
         const datasource = new PartidoJugadoresDatasourceImpl();
         const partidoJugadoresRepository = new PartidoJugadoresRepositoryImp(datasource);
         const partidoJugadoresController = new PartidoJugadoresController(partidoJugadoresRepository);
-
+        
+        
+        router.get('/partidosmarcador',partidoJugadoresController.getPartidosMarcadores);
         router.get('/', partidoJugadoresController.getPartidoJugadores);
         router.get('/:id', partidoJugadoresController.getPartidoJugadoresById);
         router.get('/partidojugadore_idjugador_idpartido/:id_jugador/:id_partido', partidoJugadoresController.getPartidoJugadoresByIdJugadorIdPartido);
         router.get('/partidojugadores_idpartido/:id_partido', partidoJugadoresController.getPartidoJugadoresByIdPartido);
-
+        
         router.post('/', partidoJugadoresController.createPartidoJugadores);
         router.post('/create_idjugador_idpartido', partidoJugadoresController.createPartidoJugadoresIdJugadorIdPartido);
         router.post('/crearvarios', partidoJugadoresController.createAllPartidoJugadores);
@@ -36,7 +38,7 @@ export class PartidoJugadoresRoutes{
         router.post('/vaya_menos_vencida',partidoJugadoresController.getVayaMenosVencida);
         router.post('/tarjetas_amarillas',partidoJugadoresController.getTarjetasAmarillas);
         router.post('/tarjetas_rojas',partidoJugadoresController.getTarjetasRojas);
-
+        
         return router;
     }
 }

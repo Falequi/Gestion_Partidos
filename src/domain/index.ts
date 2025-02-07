@@ -15,7 +15,6 @@ export * from './datasource/partidosjugadores.datasource';
 export * from './repositories/partidojugadores.repository';
 export * from './entities/partidojugadores.entity';
 
-
 // export * from './dto';
 
 export * from './uses-cases/jugadores/create-jugadores';
@@ -26,6 +25,7 @@ export * from './uses-cases/jugadores/get-jugador-id';
 export * from './uses-cases/jugadores/get-jugador-id-telegram';
 export * from './uses-cases/jugadores/get-jugador-cedula';
 export * from './uses-cases/jugadores/update-jugador';
+
 
 export * from './uses-cases/posiciones/create-posicion';
 export * from './uses-cases/posiciones/delete-posicion';
@@ -40,7 +40,7 @@ export * from './uses-cases/partidos/get-partidos';
 export * from './uses-cases/partidos/update-partidos';
 
 export * from './uses-cases/partidosjugadores/create-partidojugadores';
-export * from './uses-cases/partidosjugadores/create-partidojugadores-c';
+export * from './uses-cases/partidosjugadores/create-partidojugadores-idjugador-idpartido';
 export * from './uses-cases/partidosjugadores/get-partidojugadores-idpartido';
 export * from './uses-cases/partidosjugadores/delete-partidojugadores';
 export * from './uses-cases/partidosjugadores/delete-partidojugadores-idjugado-idpartido';

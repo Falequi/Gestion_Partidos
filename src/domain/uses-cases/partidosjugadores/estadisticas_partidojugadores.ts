@@ -29,6 +29,10 @@ export interface tarjetasRojasUsesCases {
     execute(): Promise<{ nombre_corto: string, tarjetas_rojas: number }[]>
 }
 
+export interface partidosMarcadorUsesCases {
+    execute(): Promise<{ [key: string]: any }[]>;
+}
+
 export class AsistenciaPartidos implements asistenciaPartidosUsesCases {
 
     constructor(
@@ -109,6 +113,15 @@ export class TarjetasRojas implements tarjetasRojasUsesCases{
     ){}
     execute(): Promise<{ nombre_corto: string, tarjetas_rojas: number }[]> {
         return this.repository.tarjetasRojas();
+    }
+}
+
+export class PartidosMarcador implements partidosMarcadorUsesCases{
+    constructor(
+        private readonly repository: PartidoJugadoresRepository,
+    ){}
+    execute(): Promise<{ [key: string]: any; }[]> {
+        return this.repository.partidoMarcadores();
     }
 }
 

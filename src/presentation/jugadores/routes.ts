@@ -1,7 +1,6 @@
 import { Router } from "express";
 import { JugadoresController } from "./controller.jugadores";
-import { JugadorDatasourceImpl } from "../../infrastructure/datasource/jugador.datasource.impl";
-import { JugadorRepositoryImpl } from "../../infrastructure/repositories/jugadores.repository.impl";
+import { JugadorDatasourceImpl, JugadorRepositoryImpl } from "../../infrastructure";
 
 
 

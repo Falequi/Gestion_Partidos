@@ -9,7 +9,7 @@ export class PartidoJugadoresRepositoryImp implements PartidoJugadoresRepository
         private readonly datasource: PartidoJugadoresDatasource,
     ) { }
     
-    findByIdPartido(id_partido: number): Promise<{ numero:number, nombre_corto: string }[]> {
+    findByIdPartido(id_partido: number): Promise<{ [key: string]: any }> {
         return this.datasource.findByIdPartido(id_partido);
     }
     
@@ -66,11 +66,13 @@ export class PartidoJugadoresRepositoryImp implements PartidoJugadoresRepository
         return this.datasource.create(createPartidoJugadoresDto, nombre_corto, fecha);
     }
     updateById(updatePartidoJugadoresDto: UpdatePartidoJugadoresDto): Promise<PartidoJugadoresEntity> {
-        console.log("infra repositories")
         return this.datasource.updateById(updatePartidoJugadoresDto);
     }
     deleteById(id: number): Promise<PartidoJugadoresEntity> {
         return this.datasource.deleteById(id);
     }
 
+    partidoMarcadores(): Promise<{ [key: string]: any; }[]> {
+     return this.datasource.partidoMarcadores();
+    }
 }

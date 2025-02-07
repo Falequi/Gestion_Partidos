@@ -5,7 +5,7 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
   previewFeatures = ["relationJoins"]
 }
 
@@ -25,8 +25,8 @@ model Jugador {
   email            String               @db.VarChar
   talla_camiseta   String
   fecha_nacimiento String
-  estado           Boolean              @default(true)         
-  tipo             String               //integrante - invitado 
+  estado           Boolean              @default(true)
+  tipo             String //integrante - invitado 
   id_telegram      String?
   edad             Int?
   socio            Boolean?             @default(false)
@@ -48,42 +48,59 @@ model Posicion {
   posicion   String
   sigla      String
   posiciones Jugador_Posiciones[]
-
 }
 
 model Tipo_Partido {
-  id          Int   @id @default(autoincrement())
+  id          Int       @id @default(autoincrement())
   tipo        String
   descripcion String
-  partidos    Partido[]     
+  partidos    Partido[]
 }
 
 model Partido {
-  id            Int   @id @default(autoincrement())
-  id_tipo       Int?  @default(1)               
-  fecha         String
-  lugar         String
-  hora          String
-  valor         Int?
-  jugadores     Partido_Jugadores[]
-  tipo_partido  Tipo_Partido? @relation(fields: [id_tipo], references: [id])
+  id           Int                 @id @default(autoincrement())
+  id_tipo      Int?                @default(1)
+  fecha        String
+  lugar        String
+  hora         String
+  valor        Int?
+  jugadores    Partido_Jugadores[]
+  tipo_partido Tipo_Partido?       @relation(fields: [id_tipo], references: [id])
 }
 
 model Partido_Jugadores {
-  id              Int     @id @default(autoincrement())
-  id_jugador      Int
-  id_partido      Int
-  equipo          String
-  tarjeta_amarilla Int? @default(0)
-  tarjeta_roja    Int? @default(0)
-  goles           Int? @default(0)
-  autogoles       Int? @default(0)
-  comentarios     String?
-  calificacion    Float? @default(0)
-  goles_arquero   Int? 
-  dt_ganador      Int?
-  estado_pago     Boolean? @default(false)
-  jugador         Jugador @relation(fields: [id_jugador], references: [id])
-  partido         Partido @relation(fields: [id_partido], references: [id])
+  id               Int                @id @default(autoincrement())
+  id_jugador       Int
+  id_partido       Int
+  equipo           String
+  tarjeta_amarilla Int?               @default(0)
+  tarjeta_roja     Int?               @default(0)
+  goles            Int?               @default(0)
+  autogoles        Int?               @default(0)
+  comentarios      String?
+  calificacion     Float?             @default(0)
+  goles_arquero    Int?
+  dt_ganador       Int?
+  estado_pago      Boolean?           @default(false)
+  jugador          Jugador            @relation(fields: [id_jugador], references: [id])
+  partido          Partido            @relation(fields: [id_partido], references: [id])
+  Encuesta_Partido Encuesta_Partido[]
 }
 
+model Encuesta_Partido {
+  id                    Int                     @id @default(autoincrement())
+  id_partido_jugador    Int
+  estado                Boolean
+  fecha_creacion        String
+  partido_jugador       Partido_Jugadores       @relation(fields: [id_partido_jugador], references: [id])
+  Votos_Partido_Jugador Votos_Partido_Jugador[]
+}
+
+model Votos_Partido_Jugador {
+  id                    Int              @id @default(autoincrement())
+  id_encuesta_partido   Int
+  id_jugador_calificado Int
+  id_jugador_votante    Int
+  calificacion          Int
+  encuesta_partido      Encuesta_Partido @relation(fields: [id_encuesta_partido], references: [id])
+}

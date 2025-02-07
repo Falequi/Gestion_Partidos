@@ -32,9 +32,7 @@ export class JugadoresController {
 
   }
 
-
   public getJugadores = (req: Request, res: Response) => {
-
     new GetJugadores(this.jugadorRepository)
       .execute()
       .then(todos => res.json(todos))
@@ -43,7 +41,6 @@ export class JugadoresController {
   };
 
   public getJugadorId = (req: Request, res: Response) => {
-
     const nombre_corto = req.params.nombre_corto;
 
     new GetJugadorId(this.jugadorRepository)
@@ -53,7 +50,6 @@ export class JugadoresController {
   }
 
   public getJugadorById = (req: Request, res: Response) => {
-
     const id = +req.params.id;
     new GetJugador(this.jugadorRepository)
       .execute(id)
@@ -77,7 +73,6 @@ export class JugadoresController {
 
     const id = +req.params.id;
     const [error, updateJugadorDto] = UpdateJugadorDto.create({ ...req.body, id });
-    
 
     if (error) return res.status(400).json({ error });
 
@@ -91,7 +86,7 @@ export class JugadoresController {
 
   public deleteJugador = (req: Request, res: Response) => {
     const id = +req.params.id;
-
+    
     new DeleteJugador(this.jugadorRepository)
       .execute(id)
       .then(todo => res.json(todo))

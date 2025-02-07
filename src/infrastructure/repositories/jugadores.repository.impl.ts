@@ -39,4 +39,3 @@ export class JugadorRepositoryImpl implements JugadorRepository {
 
 }
 
-

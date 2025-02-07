@@ -7,6 +7,8 @@ export class PartidoDatasourceImpl implements PartidoDatasource {
 
   async create(createPartidoDto: CreatePartidoDto): Promise<PartidoEntity> {
 
+    // validar que el tipo de partido si exista
+
     const partido = await prisma.partido.create({
       data: createPartidoDto!
     });
