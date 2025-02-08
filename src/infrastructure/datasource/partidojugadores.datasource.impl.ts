@@ -2,7 +2,6 @@ import { prisma } from "../../data/postgres";
 import { CreatePartidoJugadoresDto, UpdatePartidoJugadoresDto } from "../../domain/dto";
 import { PartidoJugadoresDatasource } from "../../domain/datasource/partidosjugadores.datasource";
 import { PartidoJugadoresEntity } from '../../domain/entities/partidojugadores.entity';
-import { count, error } from "console";
 
 export class PartidoJugadoresDatasourceImpl implements PartidoJugadoresDatasource {
 
@@ -96,8 +95,10 @@ export class PartidoJugadoresDatasourceImpl implements PartidoJugadoresDatasourc
 
         const { id_jugador, id_partido } = createPartidoJugadoresDto;
 
-        const IdJugadorIdPartido = await this.findByIdJugadorIdPartido(id_jugador, id_partido);
-
+        const IdJugadorIdPartido = await prisma.partido_Jugadores.findFirst({
+            where: { id_jugador, id_partido }
+        });
+        
         if (IdJugadorIdPartido) throw `The record already exists`;
 
         const partidoJugador = await prisma.partido_Jugadores.create({
