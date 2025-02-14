@@ -32,7 +32,7 @@ export class UpdateJugadorDto {
         if (this.RH != undefined) returnObj.RH = this.RH;
         if (this.telefono != undefined) returnObj.telefono = this.telefono;
         if (this.email != undefined) returnObj.email = this.email;
-        if (this. talla_camiseta != undefined) returnObj.talla_camiseta = this.talla_camiseta;
+        if (this.talla_camiseta != undefined) returnObj.talla_camiseta = this.talla_camiseta;
         if (this.fecha_nacimiento != undefined) returnObj.fecha_nacimiento = this.fecha_nacimiento;
         if (this.estado != undefined) returnObj.estado = this.estado;
         if (this.tipo != undefined) returnObj.tipo = this.tipo;
@@ -59,6 +59,8 @@ export class UpdateJugadorDto {
         }
 
         props.edad = Edad.calcular(fecha_nacimiento);
+
+        if ( isNaN(props.edad))  props.edad = undefined;
 
         const { edad } = props;
 
