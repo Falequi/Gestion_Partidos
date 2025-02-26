@@ -686,7 +686,7 @@ export class PartidoJugadoresDatasourceImpl implements PartidoJugadoresDatasourc
                     autogolesEquipo2: [],
                 };
 
-                let equipos: string[] | null  = [];
+                let equipos: string[] = [];
                 // Procesamos los jugadores del partido actual
                 partido.jugadores.forEach((participacion) => {
                     equipos = Array.from(new Set(partido.jugadores.map((jugador) => jugador.equipo)));
