@@ -72,7 +72,7 @@ model Partido_Jugadores {
   id               Int                @id @default(autoincrement())
   id_jugador       Int
   id_partido       Int
-  equipo           String?            @default("")
+  equipo           String             @default("")
   tarjeta_amarilla Int?               @default(0)
   tarjeta_roja     Int?               @default(0)
   goles            Int?               @default(0)
