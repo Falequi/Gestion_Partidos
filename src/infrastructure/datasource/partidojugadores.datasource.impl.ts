@@ -44,6 +44,7 @@ export class PartidoJugadoresDatasourceImpl implements PartidoJugadoresDatasourc
         });
 
         const listaJugadores = jugadores.map((jugador, i) => ({
+            id: jugador.jugador.id,
             nombre_corto: jugador.jugador.nombre_corto,
             equipo: jugador.equipo,
             tarjeta_amarilla: jugador.tarjeta_amarilla,
